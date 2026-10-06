@@ -1,0 +1,34 @@
+{
+  "role": "complete_attacker_input_package",
+  "format": "gpt2-row-wise-keyed-bcq-v1",
+  "matrix_count": 72,
+  "matrix_layout": "out_features_by_in_features",
+  "binary_values": [
+    -1,
+    1
+  ],
+  "public_transformation": "B_star[k,i,:] = S[i,k] * B[pi[i,k],i,:]",
+  "key_granularity": "independent per matrix row and binary basis",
+  "artifacts": {
+    "public_b_star": {
+      "file": "public_b_star.safetensors",
+      "sha256": "85a48eb92e494d803a7b6b80b884ccd229b62d42fb0d0fe2e17f106cd36c6ce0"
+    }
+  },
+  "allowed_public_side_information": [
+    "public tensor shapes",
+    "published residual-binarization algorithm"
+  ],
+  "deliberately_excluded": [
+    "original B",
+    "alpha",
+    "z",
+    "S",
+    "pi",
+    "random seed and generator state",
+    "W_true",
+    "W_BCQ",
+    "GPT-2 identity, config, tokenizer, and pretrained weights",
+    "any model-family checkpoint"
+  ]
+}

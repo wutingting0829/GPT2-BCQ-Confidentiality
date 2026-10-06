@@ -1,0 +1,369 @@
+{
+  "created_at_utc": "2026-09-03T05:56:20.467106+00:00",
+  "command": [
+    "/home/sense/transformers/.venv/bin/python",
+    "BCQ/screen_activation_aware_bcq.py",
+    "--base-q",
+    "6",
+    "--sensitive-q",
+    "8",
+    "--max-iterations",
+    "50",
+    "--calibration-samples",
+    "16",
+    "--eval-samples",
+    "16",
+    "--output-dir",
+    "BCQ/sweeps/mixed-q6-q8-activation-aware-50"
+  ],
+  "method": "diagonal_activation_aware_mixed_q_alternating",
+  "configuration": {
+    "base_q": 6,
+    "sensitive_q": 8,
+    "sensitive_rule": "layer == 0 or matrix in {W_O, W_PROJ}",
+    "effective_weighted_average_q": 6.930555555555555,
+    "max_iterations": 50,
+    "coefficient_objective": "sum_j E[x_j^2] * (W_true[i,j] - W_BCQ[i,j])^2"
+  },
+  "calibration": {
+    "dataset": "Salesforce/wikitext",
+    "dataset_config": "wikitext-2-raw-v1",
+    "dataset_revision": "b08601e04326c79dfdd32d625aee71d232d685c3",
+    "split": "train",
+    "block_size": 1024,
+    "samples": 16,
+    "moments_file": "activation_second_moments.safetensors",
+    "moments_sha256": "11922561dbd929476ec5de26defba898c82c345e8fa60e6516794f59f2b60460"
+  },
+  "evaluation": {
+    "split": "validation",
+    "block_size": 1024,
+    "samples": 16,
+    "device": "cpu"
+  },
+  "control": {
+    "eval_samples": 16,
+    "evaluated_tokens": 16368,
+    "eval_accuracy": 0.41813294232649073,
+    "eval_loss": 3.157943770289421,
+    "perplexity": 23.52217916447681
+  },
+  "candidate": {
+    "weight_metrics": {
+      "elements": 84934656,
+      "mse": 0.00021711289661733514,
+      "rmse": 0.014734751325262843,
+      "mae": 0.006637668603051977,
+      "max_abs_error": 13.045854568481445,
+      "relative_frobenius_error": 0.11276925398786192,
+      "cosine_similarity": 0.9936212204362195,
+      "sqnr_db": 18.95618585165269
+    },
+    "functional_metrics": {
+      "eval_samples": 16,
+      "evaluated_tokens": 16368,
+      "eval_accuracy": 0.39613880742913,
+      "eval_loss": 3.3291643857955933,
+      "perplexity": 27.915005779334315
+    },
+    "accuracy_retention": 0.9473991817650496,
+    "perplexity_ratio": 1.1867525361549645
+  },
+  "matrix_settings": {
+    "layer_00.W_Q": {
+      "q": 8,
+      "iterations": 32
+    },
+    "layer_00.W_K": {
+      "q": 8,
+      "iterations": 29
+    },
+    "layer_00.W_V": {
+      "q": 8,
+      "iterations": 35
+    },
+    "layer_00.W_O": {
+      "q": 8,
+      "iterations": 31
+    },
+    "layer_00.W_FC": {
+      "q": 8,
+      "iterations": 50
+    },
+    "layer_00.W_PROJ": {
+      "q": 8,
+      "iterations": 38
+    },
+    "layer_01.W_Q": {
+      "q": 6,
+      "iterations": 34
+    },
+    "layer_01.W_K": {
+      "q": 6,
+      "iterations": 27
+    },
+    "layer_01.W_V": {
+      "q": 6,
+      "iterations": 29
+    },
+    "layer_01.W_O": {
+      "q": 8,
+      "iterations": 35
+    },
+    "layer_01.W_FC": {
+      "q": 6,
+      "iterations": 35
+    },
+    "layer_01.W_PROJ": {
+      "q": 8,
+      "iterations": 39
+    },
+    "layer_02.W_Q": {
+      "q": 6,
+      "iterations": 27
+    },
+    "layer_02.W_K": {
+      "q": 6,
+      "iterations": 37
+    },
+    "layer_02.W_V": {
+      "q": 6,
+      "iterations": 24
+    },
+    "layer_02.W_O": {
+      "q": 8,
+      "iterations": 27
+    },
+    "layer_02.W_FC": {
+      "q": 6,
+      "iterations": 35
+    },
+    "layer_02.W_PROJ": {
+      "q": 8,
+      "iterations": 50
+    },
+    "layer_03.W_Q": {
+      "q": 6,
+      "iterations": 41
+    },
+    "layer_03.W_K": {
+      "q": 6,
+      "iterations": 36
+    },
+    "layer_03.W_V": {
+      "q": 6,
+      "iterations": 31
+    },
+    "layer_03.W_O": {
+      "q": 8,
+      "iterations": 35
+    },
+    "layer_03.W_FC": {
+      "q": 6,
+      "iterations": 47
+    },
+    "layer_03.W_PROJ": {
+      "q": 8,
+      "iterations": 43
+    },
+    "layer_04.W_Q": {
+      "q": 6,
+      "iterations": 38
+    },
+    "layer_04.W_K": {
+      "q": 6,
+      "iterations": 36
+    },
+    "layer_04.W_V": {
+      "q": 6,
+      "iterations": 38
+    },
+    "layer_04.W_O": {
+      "q": 8,
+      "iterations": 43
+    },
+    "layer_04.W_FC": {
+      "q": 6,
+      "iterations": 37
+    },
+    "layer_04.W_PROJ": {
+      "q": 8,
+      "iterations": 38
+    },
+    "layer_05.W_Q": {
+      "q": 6,
+      "iterations": 45
+    },
+    "layer_05.W_K": {
+      "q": 6,
+      "iterations": 49
+    },
+    "layer_05.W_V": {
+      "q": 6,
+      "iterations": 28
+    },
+    "layer_05.W_O": {
+      "q": 8,
+      "iterations": 40
+    },
+    "layer_05.W_FC": {
+      "q": 6,
+      "iterations": 45
+    },
+    "layer_05.W_PROJ": {
+      "q": 8,
+      "iterations": 46
+    },
+    "layer_06.W_Q": {
+      "q": 6,
+      "iterations": 37
+    },
+    "layer_06.W_K": {
+      "q": 6,
+      "iterations": 35
+    },
+    "layer_06.W_V": {
+      "q": 6,
+      "iterations": 29
+    },
+    "layer_06.W_O": {
+      "q": 8,
+      "iterations": 40
+    },
+    "layer_06.W_FC": {
+      "q": 6,
+      "iterations": 41
+    },
+    "layer_06.W_PROJ": {
+      "q": 8,
+      "iterations": 31
+    },
+    "layer_07.W_Q": {
+      "q": 6,
+      "iterations": 40
+    },
+    "layer_07.W_K": {
+      "q": 6,
+      "iterations": 33
+    },
+    "layer_07.W_V": {
+      "q": 6,
+      "iterations": 30
+    },
+    "layer_07.W_O": {
+      "q": 8,
+      "iterations": 43
+    },
+    "layer_07.W_FC": {
+      "q": 6,
+      "iterations": 46
+    },
+    "layer_07.W_PROJ": {
+      "q": 8,
+      "iterations": 46
+    },
+    "layer_08.W_Q": {
+      "q": 6,
+      "iterations": 42
+    },
+    "layer_08.W_K": {
+      "q": 6,
+      "iterations": 49
+    },
+    "layer_08.W_V": {
+      "q": 6,
+      "iterations": 40
+    },
+    "layer_08.W_O": {
+      "q": 8,
+      "iterations": 31
+    },
+    "layer_08.W_FC": {
+      "q": 6,
+      "iterations": 40
+    },
+    "layer_08.W_PROJ": {
+      "q": 8,
+      "iterations": 50
+    },
+    "layer_09.W_Q": {
+      "q": 6,
+      "iterations": 45
+    },
+    "layer_09.W_K": {
+      "q": 6,
+      "iterations": 41
+    },
+    "layer_09.W_V": {
+      "q": 6,
+      "iterations": 28
+    },
+    "layer_09.W_O": {
+      "q": 8,
+      "iterations": 45
+    },
+    "layer_09.W_FC": {
+      "q": 6,
+      "iterations": 42
+    },
+    "layer_09.W_PROJ": {
+      "q": 8,
+      "iterations": 50
+    },
+    "layer_10.W_Q": {
+      "q": 6,
+      "iterations": 43
+    },
+    "layer_10.W_K": {
+      "q": 6,
+      "iterations": 38
+    },
+    "layer_10.W_V": {
+      "q": 6,
+      "iterations": 46
+    },
+    "layer_10.W_O": {
+      "q": 8,
+      "iterations": 50
+    },
+    "layer_10.W_FC": {
+      "q": 6,
+      "iterations": 42
+    },
+    "layer_10.W_PROJ": {
+      "q": 8,
+      "iterations": 50
+    },
+    "layer_11.W_Q": {
+      "q": 6,
+      "iterations": 38
+    },
+    "layer_11.W_K": {
+      "q": 6,
+      "iterations": 38
+    },
+    "layer_11.W_V": {
+      "q": 6,
+      "iterations": 36
+    },
+    "layer_11.W_O": {
+      "q": 8,
+      "iterations": 37
+    },
+    "layer_11.W_FC": {
+      "q": 6,
+      "iterations": 42
+    },
+    "layer_11.W_PROJ": {
+      "q": 8,
+      "iterations": 50
+    }
+  },
+  "provenance": {
+    "model_path": "/home/sense/transformers/outputs/cpu-smoke-test-002",
+    "reference_path": "/home/sense/transformers/BCQ/artifacts/cpu-smoke-test-002-q3/reference_w_true.safetensors",
+    "reference_sha256": "488f9f54344ecf7d957daa617365d1d9989c37649bd3efae34d0d76320a978ed",
+    "script_sha256": "7775a0b0b2f5810d5dd63037c3abdceb138fdc611ead45fa6a142bef3eb4f762"
+  },
+  "restore_verification": "passed"
+}

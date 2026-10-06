@@ -1,0 +1,334 @@
+"""Extract GPT-2 block weights and build a row-wise BCQ baseline.
+
+The saved artifacts deliberately separate public binary matrices from secret
+scales and offsets so an attack cannot accidentally consume secret values.
+"""
+
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import shutil
+import subprocess
+import sys
+from datetime import datetime, timezone
+from pathlib import Path
+
+import safetensors
+import torch
+import transformers
+from safetensors.torch import save_file
+from transformers import AutoModelForCausalLM
+
+
+MATRIX_DESCRIPTIONS = {
+    "W_Q": "attention query projection",
+    "W_K": "attention key projection",
+    "W_V": "attention value projection",
+    "W_O": "attention output projection",
+    "W_FC": "MLP input projection",
+    "W_PROJ": "MLP output projection",
+}
+
+
+def parse_args() -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument(
+        "--model-path",
+        type=Path,
+        default=Path("outputs/cpu-smoke-test-002"),
+        help="Local GPT-2 checkpoint produced by run_clm.py.",
+    )
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=Path("BCQ/artifacts/cpu-smoke-test-002-q3"),
+        help="Directory in which to write the separated BCQ artifacts.",
+    )
+    parser.add_argument(
+        "--q",
+        type=int,
+        default=3,
+        help="Number of binary bases per weight (default: 3).",
+    )
+    parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="Overwrite files in an existing non-empty output directory.",
+    )
+    return parser.parse_args()
+
+
+def extract_transformer_matrices(model: torch.nn.Module) -> tuple[dict[str, torch.Tensor], dict[str, str]]:
+    """Return all GPT-2 attention/MLP matrices in [out_features, in_features] layout."""
+    matrices: dict[str, torch.Tensor] = {}
+    source_parameters: dict[str, str] = {}
+
+    for layer_index, block in enumerate(model.transformer.h):
+        prefix = f"layer_{layer_index:02d}"
+
+        # GPT-2 Conv1D stores weights as [in_features, out_features].
+        qkv = block.attn.c_attn.weight.detach().cpu().float().T.contiguous()
+        query, key, value = torch.chunk(qkv, 3, dim=0)
+        layer_matrices = {
+            "W_Q": query.contiguous(),
+            "W_K": key.contiguous(),
+            "W_V": value.contiguous(),
+            "W_O": block.attn.c_proj.weight.detach().cpu().float().T.contiguous(),
+            "W_FC": block.mlp.c_fc.weight.detach().cpu().float().T.contiguous(),
+            "W_PROJ": block.mlp.c_proj.weight.detach().cpu().float().T.contiguous(),
+        }
+
+        for matrix_name, weight in layer_matrices.items():
+            artifact_name = f"{prefix}.{matrix_name}"
+            matrices[artifact_name] = weight
+            if matrix_name in {"W_Q", "W_K", "W_V"}:
+                source_parameters[artifact_name] = f"transformer.h.{layer_index}.attn.c_attn.weight"
+            elif matrix_name == "W_O":
+                source_parameters[artifact_name] = f"transformer.h.{layer_index}.attn.c_proj.weight"
+            elif matrix_name == "W_FC":
+                source_parameters[artifact_name] = f"transformer.h.{layer_index}.mlp.c_fc.weight"
+            else:
+                source_parameters[artifact_name] = f"transformer.h.{layer_index}.mlp.c_proj.weight"
+
+    return matrices, source_parameters
+
+
+@torch.inference_mode()
+def greedy_residual_bcq(
+    weight: torch.Tensor, q: int
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+    """Approximate one matrix with per-row offsets and greedy binary bases.
+
+    Shapes:
+        weight, reconstruction: [rows, columns]
+        binary: [q, rows, columns]
+        alpha: [rows, q]
+        offset: [rows, 1]
+    """
+    if weight.ndim != 2:
+        raise ValueError(f"BCQ expects a 2D matrix, got shape {tuple(weight.shape)}")
+    if q < 1:
+        raise ValueError(f"q must be at least 1, got {q}")
+
+    offset = weight.mean(dim=1, keepdim=True)
+    residual = weight - offset
+    binary_bases: list[torch.Tensor] = []
+    scales: list[torch.Tensor] = []
+
+    for _ in range(q):
+        binary = torch.where(residual >= 0, 1, -1).to(torch.int8)
+        alpha = residual.abs().mean(dim=1)
+        residual = residual - alpha[:, None] * binary
+        binary_bases.append(binary)
+        scales.append(alpha)
+
+    binary_tensor = torch.stack(binary_bases, dim=0)
+    alpha_tensor = torch.stack(scales, dim=1)
+    reconstruction = offset + torch.einsum("rq,qrc->rc", alpha_tensor, binary_tensor.float())
+    return binary_tensor, alpha_tensor, offset, reconstruction
+
+
+def reconstruction_metrics(weight: torch.Tensor, reconstruction: torch.Tensor) -> dict[str, float]:
+    error = reconstruction - weight
+    squared_error = error.square().sum()
+    weight_energy = weight.square().sum()
+    return {
+        "mse": error.square().mean().item(),
+        "rmse": error.square().mean().sqrt().item(),
+        "max_abs_error": error.abs().max().item(),
+        "relative_frobenius_error": (squared_error / weight_energy).sqrt().item(),
+    }
+
+
+def sha256_file(path: Path) -> str:
+    digest = hashlib.sha256()
+    with path.open("rb") as file:
+        for chunk in iter(lambda: file.read(1024 * 1024), b""):
+            digest.update(chunk)
+    return digest.hexdigest()
+
+
+def git_metadata(repo_root: Path) -> dict[str, object]:
+    def git(*arguments: str) -> str:
+        result = subprocess.run(
+            ["git", *arguments],
+            cwd=repo_root,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        return result.stdout.strip()
+
+    try:
+        status = git("status", "--short")
+        return {
+            "transformers_commit": git("rev-parse", "HEAD"),
+            "repository_dirty": bool(status),
+            "git_status": status.splitlines(),
+        }
+    except (FileNotFoundError, subprocess.CalledProcessError):
+        return {
+            "transformers_commit": None,
+            "repository_dirty": None,
+            "git_status": [],
+        }
+
+
+def main() -> None:
+    args = parse_args()
+    if args.q < 1:
+        raise ValueError(f"--q must be at least 1, got {args.q}")
+
+    model_path = args.model_path.expanduser().resolve()
+    output_dir = args.output_dir.expanduser().resolve()
+    if not model_path.is_dir():
+        raise FileNotFoundError(f"Model directory does not exist: {model_path}")
+    if output_dir.is_dir() and any(output_dir.iterdir()) and not args.overwrite:
+        raise FileExistsError(
+            f"Output directory is not empty: {output_dir}. "
+            "Choose a new --output-dir or pass --overwrite explicitly."
+        )
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    model = AutoModelForCausalLM.from_pretrained(model_path, local_files_only=True)
+    model.eval()
+    if model.config.model_type != "gpt2":
+        raise ValueError(f"Expected a GPT-2 checkpoint, got model_type={model.config.model_type!r}")
+
+    true_weights, source_parameters = extract_transformer_matrices(model)
+    public_binary: dict[str, torch.Tensor] = {}
+    secret_parameters: dict[str, torch.Tensor] = {}
+    baseline_weights: dict[str, torch.Tensor] = {}
+    matrix_metadata: dict[str, dict[str, object]] = {}
+
+    total_squared_error = 0.0
+    total_weight_energy = 0.0
+    total_elements = 0
+
+    for name, weight in true_weights.items():
+        binary, alpha, offset, reconstruction = greedy_residual_bcq(weight, args.q)
+        public_binary[name] = binary
+        secret_parameters[f"{name}.alpha"] = alpha
+        secret_parameters[f"{name}.z"] = offset
+        baseline_weights[name] = reconstruction
+
+        error = reconstruction - weight
+        total_squared_error += error.square().sum().item()
+        total_weight_energy += weight.square().sum().item()
+        total_elements += weight.numel()
+        short_name = name.rsplit(".", maxsplit=1)[-1]
+        metrics = reconstruction_metrics(weight, reconstruction)
+        matrix_metadata[name] = {
+            "description": MATRIX_DESCRIPTIONS[short_name],
+            "source_parameter": source_parameters[name],
+            "shape": list(weight.shape),
+            "layout": "out_features_by_in_features",
+            "metrics": metrics,
+        }
+        print(f"{name}: shape={tuple(weight.shape)}, relative_error={metrics['relative_frobenius_error']:.6f}")
+
+    artifact_paths = {
+        "reference_w_true": output_dir / "reference_w_true.safetensors",
+        "public_b": output_dir / f"public_b_q{args.q}.safetensors",
+        "secret_alpha_z": output_dir / f"secret_alpha_z_q{args.q}.safetensors",
+        "baseline_w_bcq": output_dir / f"baseline_w_bcq_q{args.q}.safetensors",
+    }
+    common_metadata = {
+        "format": "gpt2-row-wise-bcq-v1",
+        "q": str(args.q),
+        "matrix_layout": "out_features_by_in_features",
+    }
+    save_file(
+        true_weights,
+        artifact_paths["reference_w_true"],
+        metadata={**common_metadata, "role": "private_reference"},
+    )
+    save_file(public_binary, artifact_paths["public_b"], metadata={**common_metadata, "role": "public"})
+    save_file(
+        secret_parameters,
+        artifact_paths["secret_alpha_z"],
+        metadata={**common_metadata, "role": "secret"},
+    )
+    save_file(
+        baseline_weights,
+        artifact_paths["baseline_w_bcq"],
+        metadata={**common_metadata, "role": "private_baseline"},
+    )
+
+    repo_root = Path(__file__).resolve().parents[1]
+    script_snapshot_path = output_dir / "extract_gpt2_weights.snapshot.py"
+    shutil.copyfile(Path(__file__).resolve(), script_snapshot_path)
+    artifact_paths["implementation_snapshot"] = script_snapshot_path
+    source_weight_files = sorted(model_path.glob("*.safetensors")) + sorted(
+        model_path.glob("pytorch_model*.bin")
+    )
+    manifest = {
+        "created_at_utc": datetime.now(timezone.utc).isoformat(),
+        "command": [sys.executable, *sys.argv],
+        "model_path": str(model_path),
+        "source_weight_files": {
+            path.name: {"bytes": path.stat().st_size, "sha256": sha256_file(path)} for path in source_weight_files
+        },
+        "model": {
+            "model_type": model.config.model_type,
+            "architectures": model.config.architectures,
+            "n_layer": model.config.n_layer,
+            "n_embd": model.config.n_embd,
+            "n_head": model.config.n_head,
+        },
+        "software": {
+            "python": sys.version,
+            "torch": torch.__version__,
+            "transformers": transformers.__version__,
+            "safetensors": safetensors.__version__,
+        },
+        "source_repository": git_metadata(repo_root),
+        "bcq": {
+            "q": args.q,
+            "formula": "W_BCQ[i,:] = z[i] + sum_k alpha[i,k] * B[k,i,:]",
+            "method": "mean_centered_greedy_residual_binarization",
+            "binary_values": [-1, 1],
+            "alpha_granularity": "per_row_per_binary_basis",
+            "offset_granularity": "per_row",
+            "steps": [
+                "z[i] = mean(W_true[i,:])",
+                "R[0] = W_true - z",
+                "B[k] = sign(R[k-1]), with sign(0) = +1",
+                "alpha[i,k] = mean(abs(R[k-1][i,:]))",
+                "R[k] = R[k-1] - alpha[:,k] * B[k]",
+            ],
+        },
+        "scope": {
+            "layers": list(range(model.config.n_layer)),
+            "matrices_per_layer": list(MATRIX_DESCRIPTIONS),
+            "matrix_count": len(true_weights),
+            "excluded": ["biases", "layer_norm", "token_embedding", "position_embedding", "lm_head"],
+        },
+        "aggregate_metrics": {
+            "mse": total_squared_error / total_elements,
+            "rmse": (total_squared_error / total_elements) ** 0.5,
+            "relative_frobenius_error": (total_squared_error / total_weight_energy) ** 0.5,
+        },
+        "matrices": matrix_metadata,
+        "artifacts": {},
+    }
+    manifest["artifacts"] = {
+        role: {
+            "file": path.name,
+            "bytes": path.stat().st_size,
+            "sha256": sha256_file(path),
+        }
+        for role, path in artifact_paths.items()
+    }
+    manifest_path = output_dir / "manifest.json"
+    manifest_path.write_text(json.dumps(manifest, indent=2) + "\n", encoding="utf-8")
+
+    print(f"\nSaved {len(true_weights)} matrices from {model.config.n_layer} layers to {output_dir}")
+    print(f"Aggregate relative Frobenius error: {manifest['aggregate_metrics']['relative_frobenius_error']:.6f}")
+    print(f"Manifest: {manifest_path}")
+
+
+if __name__ == "__main__":
+    main()

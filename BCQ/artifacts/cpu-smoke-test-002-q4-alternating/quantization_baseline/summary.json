@@ -1,0 +1,114 @@
+{
+  "created_at_utc": "2026-09-03T04:22:02.643836+00:00",
+  "command": [
+    "/home/sense/transformers/.venv/bin/python",
+    "BCQ/evaluate_quantization_baseline.py",
+    "--artifact-dir",
+    "BCQ/artifacts/cpu-smoke-test-002-q4-alternating",
+    "--q-values",
+    "4"
+  ],
+  "claim_scope": "weight_level_representation_only",
+  "artifact_dir": "/home/sense/transformers/BCQ/artifacts/cpu-smoke-test-002-q4-alternating",
+  "q_values": [
+    4
+  ],
+  "matrix_count": 72,
+  "saved_baseline_q": 4,
+  "bcq_method": "alternating",
+  "saved_baseline_max_recomputation_difference": 0.0,
+  "source": {
+    "transformers_commit": "7c65cdb570646e8b01cc30d069579f2f4b60c398",
+    "checkpoint_files": {
+      "model.safetensors": {
+        "bytes": 497774208,
+        "sha256": "86be0e882fddfa0be8e2abf1315f5f4db76326a4644953e0e56e847ffcc563c2"
+      }
+    },
+    "reference_w_true_sha256": "d75de2e16b0584828c15e36479f66fea56be52d5bc456d607837f9dca33e1758",
+    "baseline_w_bcq_sha256": "de9ea1693898e0abf6952df36a6c24807cc7f0f3a313190d87bc6ef7d1b30745",
+    "quantizer_script_sha256": "6f0e22809d0607ec45dcd52773ce45e7b59cdbd8d5fb6903298db6e2daf177f1",
+    "evaluator_script_sha256": "b38f87c3a39019c389e86ca1cbba78345e24b7dc7a5e0306239ea512df76ae88"
+  },
+  "metric_definitions": {
+    "relative_frobenius_error": "||W_true - W_BCQ||_F / ||W_true||_F (lower is better)",
+    "cosine_similarity": "<W_true, W_BCQ> / (||W_true||_F ||W_BCQ||_F) (higher is better)",
+    "sqnr_db": "10 log10(||W_true||_F^2 / ||W_true - W_BCQ||_F^2) (higher is better)"
+  },
+  "aggregate_by_q": {
+    "4": {
+      "elements": 84934656,
+      "mse": 0.0005311132994573682,
+      "rmse": 0.02304589550131147,
+      "mae": 0.014093172698045523,
+      "max_abs_error": 7.92052698135376,
+      "relative_frobenius_error": 0.17637681056139287,
+      "cosine_similarity": 0.9843227218225689,
+      "sqnr_db": 15.071170301005788
+    }
+  },
+  "aggregate_by_q_and_matrix_type": {
+    "4": {
+      "W_FC": {
+        "elements": 28311552,
+        "mse": 0.00043497555326179986,
+        "rmse": 0.020856067540689444,
+        "mae": 0.013983357879406662,
+        "max_abs_error": 7.0956199169158936,
+        "relative_frobenius_error": 0.16064101643173476,
+        "cosine_similarity": 0.9870128995305886,
+        "sqnr_db": 15.882871131874666
+      },
+      "W_K": {
+        "elements": 7077888,
+        "mse": 0.0007358084016535142,
+        "rmse": 0.027125788498281744,
+        "mae": 0.016034603411990544,
+        "max_abs_error": 2.5564101934432983,
+        "relative_frobenius_error": 0.18368113582753318,
+        "cosine_similarity": 0.9829858800314009,
+        "sqnr_db": 14.718708874611826
+      },
+      "W_O": {
+        "elements": 7077888,
+        "mse": 0.00045747774331829024,
+        "rmse": 0.021388729352588717,
+        "mae": 0.012656517932068337,
+        "max_abs_error": 2.2893595695495605,
+        "relative_frobenius_error": 0.17591046230022658,
+        "cosine_similarity": 0.984406170873243,
+        "sqnr_db": 15.09416660094349
+      },
+      "W_PROJ": {
+        "elements": 28311552,
+        "mse": 0.0006138692159212484,
+        "rmse": 0.02477638423824688,
+        "mae": 0.01400736569066626,
+        "max_abs_error": 7.92052698135376,
+        "relative_frobenius_error": 0.19717818317550573,
+        "cosine_similarity": 0.9803676678061178,
+        "sqnr_db": 14.102822786947762
+      },
+      "W_Q": {
+        "elements": 7077888,
+        "mse": 0.0006273756609693035,
+        "rmse": 0.025047468154871532,
+        "mae": 0.016055351963682876,
+        "max_abs_error": 1.2736036777496338,
+        "relative_frobenius_error": 0.1620953529391001,
+        "cosine_similarity": 0.9867750992782242,
+        "sqnr_db": 15.804588712509663
+      },
+      "W_V": {
+        "elements": 7077888,
+        "mse": 0.0003573187108151206,
+        "rmse": 0.01890287572871177,
+        "mae": 0.01240870478851289,
+        "max_abs_error": 1.9228275418281555,
+        "relative_frobenius_error": 0.1607777806422545,
+        "cosine_similarity": 0.9869906307821523,
+        "sqnr_db": 15.875479411654707
+      }
+    }
+  }
+}

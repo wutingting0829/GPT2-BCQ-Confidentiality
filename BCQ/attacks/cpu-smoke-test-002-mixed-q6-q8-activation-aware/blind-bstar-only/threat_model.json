@@ -1,0 +1,44 @@
+{
+  "created_at_utc": "2026-09-03T07:21:05.141995+00:00",
+  "command": [
+    "/home/sense/transformers/.venv/bin/python",
+    "BCQ/prepare_public_b_star.py",
+    "--public-b",
+    "BCQ/artifacts/cpu-smoke-test-002-mixed-q6-q8-activation-aware/public_b_mixed_q6_q8.safetensors",
+    "--output-dir",
+    "BCQ/attacks/cpu-smoke-test-002-mixed-q6-q8-activation-aware/blind-bstar-only",
+    "--seed",
+    "20260903"
+  ],
+  "seed": 20260903,
+  "matrix_count": 72,
+  "key_granularity": "per_matrix_per_row_per_basis",
+  "transformation": "B_star[k,i,:] = S[i,k] * B[pi[i,k],i,:]",
+  "threat_boundary": {
+    "public": [
+      "public/public_b_star.safetensors"
+    ],
+    "secret": [
+      "secret/secret_s_pi.safetensors",
+      "source BCQ alpha and z artifact"
+    ]
+  },
+  "artifacts": {
+    "source_public_b": {
+      "path": "/home/sense/transformers/BCQ/artifacts/cpu-smoke-test-002-mixed-q6-q8-activation-aware/public_b_mixed_q6_q8.safetensors",
+      "sha256": "baf61caa5cfe55ae948d7070bf49e7597bf888c05948daf16f5270584f36c1f4"
+    },
+    "public_b_star": {
+      "path": "public/public_b_star.safetensors",
+      "sha256": "85a48eb92e494d803a7b6b80b884ccd229b62d42fb0d0fe2e17f106cd36c6ce0"
+    },
+    "secret_s_pi": {
+      "path": "secret/secret_s_pi.safetensors",
+      "sha256": "93c374909e83e63efc387ff219fc88d6d5acb010de7d348b18439260e6d48140"
+    },
+    "implementation_snapshot": {
+      "path": "prepare_public_b_star.snapshot.py",
+      "sha256": "ed2b409fb4c296be2413754a5747dabb5091a63a329dc8b34f89e4852529eee7"
+    }
+  }
+}

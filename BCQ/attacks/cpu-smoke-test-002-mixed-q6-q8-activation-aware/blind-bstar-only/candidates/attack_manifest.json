@@ -1,0 +1,71 @@
+{
+  "created_at_utc": "2026-09-03T08:20:17.218302+00:00",
+  "command": [
+    "/home/sense/transformers/.venv/bin/python",
+    "BCQ/run_blind_bstar_attacks.py",
+    "--public-b-star",
+    "BCQ/attacks/cpu-smoke-test-002-mixed-q6-q8-activation-aware/blind-bstar-only/public/public_b_star.safetensors",
+    "--output-dir",
+    "BCQ/attacks/cpu-smoke-test-002-mixed-q6-q8-activation-aware/blind-bstar-only/candidates",
+    "--overwrite"
+  ],
+  "threat_model": {
+    "name": "blind B*-only",
+    "attacker_inputs": [
+      "public B* values",
+      "public tensor shapes",
+      "published residual-binarization algorithm"
+    ],
+    "forbidden_inputs": [
+      "GPT-2 identity, config, tokenizer, or pretrained checkpoint",
+      "any pretrained/model-family weights",
+      "W_true",
+      "W_BCQ",
+      "alpha",
+      "z",
+      "S",
+      "pi"
+    ],
+    "scale_assumption": "shape-only Xavier RMS sqrt(2 / (rows + columns))",
+    "model_assembly": "performed later by the evaluator, outside the attacker boundary"
+  },
+  "seed": 314159,
+  "synthetic_training": {
+    "rows_per_q": 4096,
+    "columns": 256,
+    "q_values": [
+      6,
+      8
+    ],
+    "ridge": 0.001
+  },
+  "storage_dtype": "float16",
+  "methods": {
+    "a2_public_order": {
+      "file": "w_attack_a2_public_order.safetensors",
+      "sha256": "b6df2abfb4aef272df7d97bf1d488155be1635ebe55ad19e300159409c1865ef",
+      "description": "geometric residual weights assigned in observed B* order; shape-only scale"
+    },
+    "a3_structural_key_search": {
+      "file": "w_attack_a3_structural_key_search.safetensors",
+      "sha256": "55cd6d8fb4c62af5996b1aabb07c8fbc58c0f973974858a59ef5459bd129a5a3",
+      "description": "infer residual order from transition rates and signs from basis orientation"
+    },
+    "a4_synthetic_prior": {
+      "file": "w_attack_a4_synthetic_prior.safetensors",
+      "sha256": "7908c0a681976554625b0fb82f814ffa37615a7a240e25194d9d79e66db64f5b",
+      "description": "ridge coefficient prior trained only on generic synthetic random matrices"
+    },
+    "a5_random_base_projection": {
+      "file": "w_attack_a5_random_base_projection.safetensors",
+      "sha256": "e77a389c983f46cde4bfcb8493db8a4d62c95402922a3e2e12e52f185d4c7f66",
+      "description": "project a seeded shape-only random matrix onto span(1, B*)"
+    }
+  },
+  "predicted_key": {
+    "file": "a3_predicted_s_pi.safetensors",
+    "sha256": "65532c57a1b33639e1f7740307c529e7abb432ffd7cd5d57cb9a1429a7e8eefe"
+  },
+  "public_b_star_sha256": "85a48eb92e494d803a7b6b80b884ccd229b62d42fb0d0fe2e17f106cd36c6ce0",
+  "implementation_snapshot_sha256": "0b86181dde9e4a03c647087b8cd89a59b1aa2b91a2bc238a4d674973b80ffb51"
+}

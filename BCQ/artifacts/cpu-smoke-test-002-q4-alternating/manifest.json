@@ -1,0 +1,1280 @@
+{
+  "created_at_utc": "2026-09-03T04:20:40.168873+00:00",
+  "command": [
+    "/home/sense/transformers/.venv/bin/python",
+    "BCQ/extract_gpt2_weights.py",
+    "--model-path",
+    "outputs/cpu-smoke-test-002",
+    "--output-dir",
+    "BCQ/artifacts/cpu-smoke-test-002-q4-alternating",
+    "--q",
+    "4",
+    "--method",
+    "alternating",
+    "--alternating-iterations",
+    "20"
+  ],
+  "model_path": "/home/sense/transformers/outputs/cpu-smoke-test-002",
+  "source_weight_files": {
+    "model.safetensors": {
+      "bytes": 497774208,
+      "sha256": "86be0e882fddfa0be8e2abf1315f5f4db76326a4644953e0e56e847ffcc563c2"
+    }
+  },
+  "model": {
+    "model_type": "gpt2",
+    "architectures": [
+      "GPT2LMHeadModel"
+    ],
+    "n_layer": 12,
+    "n_embd": 768,
+    "n_head": 12
+  },
+  "software": {
+    "python": "3.12.2 | packaged by conda-forge | (main, Feb 16 2024, 20:50:58) [GCC 12.3.0]",
+    "torch": "2.14.0+cu126",
+    "transformers": "5.16.0.dev0",
+    "safetensors": "0.8.0"
+  },
+  "source_repository": {
+    "transformers_commit": "7c65cdb570646e8b01cc30d069579f2f4b60c398",
+    "repository_dirty": true,
+    "git_status": [
+      "?? BCQ/",
+      "?? outputs/"
+    ]
+  },
+  "bcq": {
+    "q": 4,
+    "formula": "W_BCQ[i,:] = z[i] + sum_k alpha[i,k] * B[k,i,:]",
+    "method": "alternating",
+    "binary_values": [
+      -1,
+      1
+    ],
+    "alpha_granularity": "per_row_per_binary_basis",
+    "offset_granularity": "per_row",
+    "initialization": "mean_centered_greedy_residual_binarization",
+    "alternating_max_iterations": 20,
+    "coefficient_update": "joint_per_row_least_squares",
+    "binary_update": "coordinate_sign_update"
+  },
+  "scope": {
+    "layers": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8,
+      9,
+      10,
+      11
+    ],
+    "matrices_per_layer": [
+      "W_Q",
+      "W_K",
+      "W_V",
+      "W_O",
+      "W_FC",
+      "W_PROJ"
+    ],
+    "matrix_count": 72,
+    "excluded": [
+      "biases",
+      "layer_norm",
+      "token_embedding",
+      "position_embedding",
+      "lm_head"
+    ]
+  },
+  "aggregate_metrics": {
+    "mse": 0.0005311132975035479,
+    "rmse": 0.0230458954589217,
+    "relative_frobenius_error": 0.17637681179923972
+  },
+  "matrices": {
+    "layer_00.W_Q": {
+      "description": "attention query projection",
+      "source_parameter": "transformer.h.0.attn.c_attn.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.001556899631395936,
+        "rmse": 0.039457567036151886,
+        "max_abs_error": 1.1634395122528076,
+        "relative_frobenius_error": 0.16530922055244446
+      }
+    },
+    "layer_00.W_K": {
+      "description": "attention key projection",
+      "source_parameter": "transformer.h.0.attn.c_attn.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.0023121852427721024,
+        "rmse": 0.04808518663048744,
+        "max_abs_error": 1.5692822933197021,
+        "relative_frobenius_error": 0.19764171540737152
+      }
+    },
+    "layer_00.W_V": {
+      "description": "attention value projection",
+      "source_parameter": "transformer.h.0.attn.c_attn.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 9.684837277745828e-05,
+        "rmse": 0.009841157123446465,
+        "max_abs_error": 0.4027458429336548,
+        "relative_frobenius_error": 0.16933518648147583
+      }
+    },
+    "layer_00.W_O": {
+      "description": "attention output projection",
+      "source_parameter": "transformer.h.0.attn.c_proj.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.0007316197734326124,
+        "rmse": 0.027048470452427864,
+        "max_abs_error": 1.3560558557510376,
+        "relative_frobenius_error": 0.18342874944210052
+      }
+    },
+    "layer_00.W_FC": {
+      "description": "MLP input projection",
+      "source_parameter": "transformer.h.0.mlp.c_fc.weight",
+      "shape": [
+        3072,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.0006478407303802669,
+        "rmse": 0.025452716276049614,
+        "max_abs_error": 1.8487138748168945,
+        "relative_frobenius_error": 0.1802986115217209
+      }
+    },
+    "layer_00.W_PROJ": {
+      "description": "MLP output projection",
+      "source_parameter": "transformer.h.0.mlp.c_proj.weight",
+      "shape": [
+        768,
+        3072
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.00037124473601579666,
+        "rmse": 0.01926771178841591,
+        "max_abs_error": 4.101644039154053,
+        "relative_frobenius_error": 0.2190348356962204
+      }
+    },
+    "layer_01.W_Q": {
+      "description": "attention query projection",
+      "source_parameter": "transformer.h.1.attn.c_attn.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.000658881152048707,
+        "rmse": 0.025668680667877197,
+        "max_abs_error": 0.9404058456420898,
+        "relative_frobenius_error": 0.16995033621788025
+      }
+    },
+    "layer_01.W_K": {
+      "description": "attention key projection",
+      "source_parameter": "transformer.h.1.attn.c_attn.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.0007005303632467985,
+        "rmse": 0.02646753378212452,
+        "max_abs_error": 0.7989259958267212,
+        "relative_frobenius_error": 0.16643965244293213
+      }
+    },
+    "layer_01.W_V": {
+      "description": "attention value projection",
+      "source_parameter": "transformer.h.1.attn.c_attn.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.00029347336385399103,
+        "rmse": 0.01713106408715248,
+        "max_abs_error": 0.7152738571166992,
+        "relative_frobenius_error": 0.16523952782154083
+      }
+    },
+    "layer_01.W_O": {
+      "description": "attention output projection",
+      "source_parameter": "transformer.h.1.attn.c_proj.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.00037893198896199465,
+        "rmse": 0.019466174766421318,
+        "max_abs_error": 1.898946762084961,
+        "relative_frobenius_error": 0.19099852442741394
+      }
+    },
+    "layer_01.W_FC": {
+      "description": "MLP input projection",
+      "source_parameter": "transformer.h.1.mlp.c_fc.weight",
+      "shape": [
+        3072,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.0004452478315215558,
+        "rmse": 0.02110089734196663,
+        "max_abs_error": 1.4280985593795776,
+        "relative_frobenius_error": 0.16141840815544128
+      }
+    },
+    "layer_01.W_PROJ": {
+      "description": "MLP output projection",
+      "source_parameter": "transformer.h.1.mlp.c_proj.weight",
+      "shape": [
+        768,
+        3072
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.0003050910891033709,
+        "rmse": 0.01746685616672039,
+        "max_abs_error": 4.011205196380615,
+        "relative_frobenius_error": 0.20032861828804016
+      }
+    },
+    "layer_02.W_Q": {
+      "description": "attention query projection",
+      "source_parameter": "transformer.h.2.attn.c_attn.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.0009071930544450879,
+        "rmse": 0.030119646340608597,
+        "max_abs_error": 0.6347247362136841,
+        "relative_frobenius_error": 0.1590908169746399
+      }
+    },
+    "layer_02.W_K": {
+      "description": "attention key projection",
+      "source_parameter": "transformer.h.2.attn.c_attn.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.000863080145791173,
+        "rmse": 0.029378226026892662,
+        "max_abs_error": 1.152901291847229,
+        "relative_frobenius_error": 0.19350698590278625
+      }
+    },
+    "layer_02.W_V": {
+      "description": "attention value projection",
+      "source_parameter": "transformer.h.2.attn.c_attn.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.00028617202769964933,
+        "rmse": 0.01691661961376667,
+        "max_abs_error": 0.4368864893913269,
+        "relative_frobenius_error": 0.1610669493675232
+      }
+    },
+    "layer_02.W_O": {
+      "description": "attention output projection",
+      "source_parameter": "transformer.h.2.attn.c_proj.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.00023327900271397084,
+        "rmse": 0.015273474156856537,
+        "max_abs_error": 1.2926995754241943,
+        "relative_frobenius_error": 0.1884796917438507
+      }
+    },
+    "layer_02.W_FC": {
+      "description": "MLP input projection",
+      "source_parameter": "transformer.h.2.mlp.c_fc.weight",
+      "shape": [
+        3072,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.000492143037263304,
+        "rmse": 0.022184297442436218,
+        "max_abs_error": 7.095620155334473,
+        "relative_frobenius_error": 0.1660224199295044
+      }
+    },
+    "layer_02.W_PROJ": {
+      "description": "MLP output projection",
+      "source_parameter": "transformer.h.2.mlp.c_proj.weight",
+      "shape": [
+        768,
+        3072
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.00041140089160762727,
+        "rmse": 0.020283019170165062,
+        "max_abs_error": 2.853597640991211,
+        "relative_frobenius_error": 0.21789085865020752
+      }
+    },
+    "layer_03.W_Q": {
+      "description": "attention query projection",
+      "source_parameter": "transformer.h.3.attn.c_attn.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.0006758006638847291,
+        "rmse": 0.025996167212724686,
+        "max_abs_error": 0.6571987867355347,
+        "relative_frobenius_error": 0.15779444575309753
+      }
+    },
+    "layer_03.W_K": {
+      "description": "attention key projection",
+      "source_parameter": "transformer.h.3.attn.c_attn.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.0008539411937817931,
+        "rmse": 0.029222272336483,
+        "max_abs_error": 1.4005335569381714,
+        "relative_frobenius_error": 0.19002991914749146
+      }
+    },
+    "layer_03.W_V": {
+      "description": "attention value projection",
+      "source_parameter": "transformer.h.3.attn.c_attn.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.00023820711066946387,
+        "rmse": 0.015433959662914276,
+        "max_abs_error": 0.5545673966407776,
+        "relative_frobenius_error": 0.1580231934785843
+      }
+    },
+    "layer_03.W_O": {
+      "description": "attention output projection",
+      "source_parameter": "transformer.h.3.attn.c_proj.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.00023198087001219392,
+        "rmse": 0.015230918303132057,
+        "max_abs_error": 1.01498544216156,
+        "relative_frobenius_error": 0.18105001747608185
+      }
+    },
+    "layer_03.W_FC": {
+      "description": "MLP input projection",
+      "source_parameter": "transformer.h.3.mlp.c_fc.weight",
+      "shape": [
+        3072,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.00041137824882753193,
+        "rmse": 0.020282462239265442,
+        "max_abs_error": 2.062349319458008,
+        "relative_frobenius_error": 0.15641961991786957
+      }
+    },
+    "layer_03.W_PROJ": {
+      "description": "MLP output projection",
+      "source_parameter": "transformer.h.3.mlp.c_proj.weight",
+      "shape": [
+        768,
+        3072
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.00038617674726992846,
+        "rmse": 0.0196513794362545,
+        "max_abs_error": 6.614200592041016,
+        "relative_frobenius_error": 0.2140517383813858
+      }
+    },
+    "layer_04.W_Q": {
+      "description": "attention query projection",
+      "source_parameter": "transformer.h.4.attn.c_attn.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.0007324685575440526,
+        "rmse": 0.027064155787229538,
+        "max_abs_error": 0.7033501267433167,
+        "relative_frobenius_error": 0.15879394114017487
+      }
+    },
+    "layer_04.W_K": {
+      "description": "attention key projection",
+      "source_parameter": "transformer.h.4.attn.c_attn.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.001006431644782424,
+        "rmse": 0.03172430768609047,
+        "max_abs_error": 2.556410312652588,
+        "relative_frobenius_error": 0.2013922780752182
+      }
+    },
+    "layer_04.W_V": {
+      "description": "attention value projection",
+      "source_parameter": "transformer.h.4.attn.c_attn.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.00025682378327474,
+        "rmse": 0.01602572202682495,
+        "max_abs_error": 0.45127129554748535,
+        "relative_frobenius_error": 0.15661877393722534
+      }
+    },
+    "layer_04.W_O": {
+      "description": "attention output projection",
+      "source_parameter": "transformer.h.4.attn.c_proj.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.0002786673721857369,
+        "rmse": 0.01669333316385746,
+        "max_abs_error": 0.5676885843276978,
+        "relative_frobenius_error": 0.17953796684741974
+      }
+    },
+    "layer_04.W_FC": {
+      "description": "MLP input projection",
+      "source_parameter": "transformer.h.4.mlp.c_fc.weight",
+      "shape": [
+        3072,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.00041266725747846067,
+        "rmse": 0.020314212888479233,
+        "max_abs_error": 0.9170271754264832,
+        "relative_frobenius_error": 0.1565593183040619
+      }
+    },
+    "layer_04.W_PROJ": {
+      "description": "MLP output projection",
+      "source_parameter": "transformer.h.4.mlp.c_proj.weight",
+      "shape": [
+        768,
+        3072
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.0002925822918768972,
+        "rmse": 0.017105037346482277,
+        "max_abs_error": 2.2498221397399902,
+        "relative_frobenius_error": 0.1879681944847107
+      }
+    },
+    "layer_05.W_Q": {
+      "description": "attention query projection",
+      "source_parameter": "transformer.h.5.attn.c_attn.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.0005179180880077183,
+        "rmse": 0.022757813334465027,
+        "max_abs_error": 0.7882808446884155,
+        "relative_frobenius_error": 0.16111025214195251
+      }
+    },
+    "layer_05.W_K": {
+      "description": "attention key projection",
+      "source_parameter": "transformer.h.5.attn.c_attn.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.0005147741176187992,
+        "rmse": 0.02268863469362259,
+        "max_abs_error": 1.1954010725021362,
+        "relative_frobenius_error": 0.16664743423461914
+      }
+    },
+    "layer_05.W_V": {
+      "description": "attention value projection",
+      "source_parameter": "transformer.h.5.attn.c_attn.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.00026511881151236594,
+        "rmse": 0.016282469034194946,
+        "max_abs_error": 0.33476805686950684,
+        "relative_frobenius_error": 0.15761037170886993
+      }
+    },
+    "layer_05.W_O": {
+      "description": "attention output projection",
+      "source_parameter": "transformer.h.5.attn.c_proj.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.00025620940141379833,
+        "rmse": 0.01600654236972332,
+        "max_abs_error": 0.9015676975250244,
+        "relative_frobenius_error": 0.17069095373153687
+      }
+    },
+    "layer_05.W_FC": {
+      "description": "MLP input projection",
+      "source_parameter": "transformer.h.5.mlp.c_fc.weight",
+      "shape": [
+        3072,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.0003903631877619773,
+        "rmse": 0.01975761167705059,
+        "max_abs_error": 0.8907846212387085,
+        "relative_frobenius_error": 0.15584588050842285
+      }
+    },
+    "layer_05.W_PROJ": {
+      "description": "MLP output projection",
+      "source_parameter": "transformer.h.5.mlp.c_proj.weight",
+      "shape": [
+        768,
+        3072
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.0003251048910897225,
+        "rmse": 0.018030665814876556,
+        "max_abs_error": 1.4092347621917725,
+        "relative_frobenius_error": 0.18520091474056244
+      }
+    },
+    "layer_06.W_Q": {
+      "description": "attention query projection",
+      "source_parameter": "transformer.h.6.attn.c_attn.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.0004668926994781941,
+        "rmse": 0.02160770073533058,
+        "max_abs_error": 0.8415076732635498,
+        "relative_frobenius_error": 0.16127830743789673
+      }
+    },
+    "layer_06.W_K": {
+      "description": "attention key projection",
+      "source_parameter": "transformer.h.6.attn.c_attn.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.0004857812309637666,
+        "rmse": 0.02204044535756111,
+        "max_abs_error": 1.102072834968567,
+        "relative_frobenius_error": 0.17275458574295044
+      }
+    },
+    "layer_06.W_V": {
+      "description": "attention value projection",
+      "source_parameter": "transformer.h.6.attn.c_attn.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.0003456770209595561,
+        "rmse": 0.018592391163110733,
+        "max_abs_error": 0.3388476073741913,
+        "relative_frobenius_error": 0.1568353772163391
+      }
+    },
+    "layer_06.W_O": {
+      "description": "attention output projection",
+      "source_parameter": "transformer.h.6.attn.c_proj.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.00038085892447270453,
+        "rmse": 0.01951560750603676,
+        "max_abs_error": 0.7270479798316956,
+        "relative_frobenius_error": 0.17165619134902954
+      }
+    },
+    "layer_06.W_FC": {
+      "description": "MLP input projection",
+      "source_parameter": "transformer.h.6.mlp.c_fc.weight",
+      "shape": [
+        3072,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.00038884059176780283,
+        "rmse": 0.019719041883945465,
+        "max_abs_error": 0.9837138652801514,
+        "relative_frobenius_error": 0.15601971745491028
+      }
+    },
+    "layer_06.W_PROJ": {
+      "description": "MLP output projection",
+      "source_parameter": "transformer.h.6.mlp.c_proj.weight",
+      "shape": [
+        768,
+        3072
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.0004017525934614241,
+        "rmse": 0.020043766126036644,
+        "max_abs_error": 2.2024545669555664,
+        "relative_frobenius_error": 0.18674546480178833
+      }
+    },
+    "layer_07.W_Q": {
+      "description": "attention query projection",
+      "source_parameter": "transformer.h.7.attn.c_attn.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.00047588328015990555,
+        "rmse": 0.021814748644828796,
+        "max_abs_error": 1.217435359954834,
+        "relative_frobenius_error": 0.1598600298166275
+      }
+    },
+    "layer_07.W_K": {
+      "description": "attention key projection",
+      "source_parameter": "transformer.h.7.attn.c_attn.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.0004838671302422881,
+        "rmse": 0.021996980533003807,
+        "max_abs_error": 1.2563953399658203,
+        "relative_frobenius_error": 0.16861656308174133
+      }
+    },
+    "layer_07.W_V": {
+      "description": "attention value projection",
+      "source_parameter": "transformer.h.7.attn.c_attn.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.0003584081132430583,
+        "rmse": 0.018931670114398003,
+        "max_abs_error": 0.36833661794662476,
+        "relative_frobenius_error": 0.1584693044424057
+      }
+    },
+    "layer_07.W_O": {
+      "description": "attention output projection",
+      "source_parameter": "transformer.h.7.attn.c_proj.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.0003878986171912402,
+        "rmse": 0.019695142284035683,
+        "max_abs_error": 1.0257632732391357,
+        "relative_frobenius_error": 0.1728898137807846
+      }
+    },
+    "layer_07.W_FC": {
+      "description": "MLP input projection",
+      "source_parameter": "transformer.h.7.mlp.c_fc.weight",
+      "shape": [
+        3072,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.00038677218253724277,
+        "rmse": 0.019666524603962898,
+        "max_abs_error": 1.0069525241851807,
+        "relative_frobenius_error": 0.15550047159194946
+      }
+    },
+    "layer_07.W_PROJ": {
+      "description": "MLP output projection",
+      "source_parameter": "transformer.h.7.mlp.c_proj.weight",
+      "shape": [
+        768,
+        3072
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.00046634767204523087,
+        "rmse": 0.02159508503973484,
+        "max_abs_error": 3.2792468070983887,
+        "relative_frobenius_error": 0.1818763017654419
+      }
+    },
+    "layer_08.W_Q": {
+      "description": "attention query projection",
+      "source_parameter": "transformer.h.8.attn.c_attn.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.0004345016204752028,
+        "rmse": 0.020844701677560806,
+        "max_abs_error": 0.9964405298233032,
+        "relative_frobenius_error": 0.16023039817810059
+      }
+    },
+    "layer_08.W_K": {
+      "description": "attention key projection",
+      "source_parameter": "transformer.h.8.attn.c_attn.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.000439991126768291,
+        "rmse": 0.02097596600651741,
+        "max_abs_error": 1.5113054513931274,
+        "relative_frobenius_error": 0.16868436336517334
+      }
+    },
+    "layer_08.W_V": {
+      "description": "attention value projection",
+      "source_parameter": "transformer.h.8.attn.c_attn.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.00039452745113521814,
+        "rmse": 0.019862715154886246,
+        "max_abs_error": 0.34798961877822876,
+        "relative_frobenius_error": 0.1572876125574112
+      }
+    },
+    "layer_08.W_O": {
+      "description": "attention output projection",
+      "source_parameter": "transformer.h.8.attn.c_proj.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.00041911276639439166,
+        "rmse": 0.020472243428230286,
+        "max_abs_error": 1.3877085447311401,
+        "relative_frobenius_error": 0.16730685532093048
+      }
+    },
+    "layer_08.W_FC": {
+      "description": "MLP input projection",
+      "source_parameter": "transformer.h.8.mlp.c_fc.weight",
+      "shape": [
+        3072,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.0003938971785828471,
+        "rmse": 0.01984684355556965,
+        "max_abs_error": 0.9698836803436279,
+        "relative_frobenius_error": 0.15590901672840118
+      }
+    },
+    "layer_08.W_PROJ": {
+      "description": "MLP output projection",
+      "source_parameter": "transformer.h.8.mlp.c_proj.weight",
+      "shape": [
+        768,
+        3072
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.0006334084901027381,
+        "rmse": 0.02516760863363743,
+        "max_abs_error": 4.158759117126465,
+        "relative_frobenius_error": 0.1858702152967453
+      }
+    },
+    "layer_09.W_Q": {
+      "description": "attention query projection",
+      "source_parameter": "transformer.h.9.attn.c_attn.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.0003964705392718315,
+        "rmse": 0.019911568611860275,
+        "max_abs_error": 1.2736036777496338,
+        "relative_frobenius_error": 0.16192713379859924
+      }
+    },
+    "layer_09.W_K": {
+      "description": "attention key projection",
+      "source_parameter": "transformer.h.9.attn.c_attn.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.00041277753189206123,
+        "rmse": 0.020316926762461662,
+        "max_abs_error": 1.4343438148498535,
+        "relative_frobenius_error": 0.1708415448665619
+      }
+    },
+    "layer_09.W_V": {
+      "description": "attention value projection",
+      "source_parameter": "transformer.h.9.attn.c_attn.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.00046445324551314116,
+        "rmse": 0.02155117690563202,
+        "max_abs_error": 0.49247077107429504,
+        "relative_frobenius_error": 0.15832370519638062
+      }
+    },
+    "layer_09.W_O": {
+      "description": "attention output projection",
+      "source_parameter": "transformer.h.9.attn.c_proj.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.0005139389541000128,
+        "rmse": 0.02267022244632244,
+        "max_abs_error": 0.8534537553787231,
+        "relative_frobenius_error": 0.16569457948207855
+      }
+    },
+    "layer_09.W_FC": {
+      "description": "MLP input projection",
+      "source_parameter": "transformer.h.9.mlp.c_fc.weight",
+      "shape": [
+        3072,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.00040047915535978973,
+        "rmse": 0.02001197449862957,
+        "max_abs_error": 1.3528480529785156,
+        "relative_frobenius_error": 0.15677383542060852
+      }
+    },
+    "layer_09.W_PROJ": {
+      "description": "MLP output projection",
+      "source_parameter": "transformer.h.9.mlp.c_proj.weight",
+      "shape": [
+        768,
+        3072
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.0008429784793406725,
+        "rmse": 0.029034091159701347,
+        "max_abs_error": 3.964026927947998,
+        "relative_frobenius_error": 0.18626636266708374
+      }
+    },
+    "layer_10.W_Q": {
+      "description": "attention query projection",
+      "source_parameter": "transformer.h.10.attn.c_attn.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.0003773384087253362,
+        "rmse": 0.019425200298428535,
+        "max_abs_error": 1.1417280435562134,
+        "relative_frobenius_error": 0.16370438039302826
+      }
+    },
+    "layer_10.W_K": {
+      "description": "attention key projection",
+      "source_parameter": "transformer.h.10.attn.c_attn.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.0004087068373337388,
+        "rmse": 0.020216498523950577,
+        "max_abs_error": 1.5557982921600342,
+        "relative_frobenius_error": 0.17629288136959076
+      }
+    },
+    "layer_10.W_V": {
+      "description": "attention value projection",
+      "source_parameter": "transformer.h.10.attn.c_attn.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.0005233173724263906,
+        "rmse": 0.022876130416989326,
+        "max_abs_error": 0.4489559829235077,
+        "relative_frobenius_error": 0.1582074761390686
+      }
+    },
+    "layer_10.W_O": {
+      "description": "attention output projection",
+      "source_parameter": "transformer.h.10.attn.c_proj.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.0006204874371178448,
+        "rmse": 0.02490958571434021,
+        "max_abs_error": 1.9366693496704102,
+        "relative_frobenius_error": 0.16988356411457062
+      }
+    },
+    "layer_10.W_FC": {
+      "description": "MLP input projection",
+      "source_parameter": "transformer.h.10.mlp.c_fc.weight",
+      "shape": [
+        3072,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.00040985492523759604,
+        "rmse": 0.02024487406015396,
+        "max_abs_error": 1.371656894683838,
+        "relative_frobenius_error": 0.15854912996292114
+      }
+    },
+    "layer_10.W_PROJ": {
+      "description": "MLP output projection",
+      "source_parameter": "transformer.h.10.mlp.c_proj.weight",
+      "shape": [
+        768,
+        3072
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.0011835473123937845,
+        "rmse": 0.034402720630168915,
+        "max_abs_error": 7.92052698135376,
+        "relative_frobenius_error": 0.1931162178516388
+      }
+    },
+    "layer_11.W_Q": {
+      "description": "attention query projection",
+      "source_parameter": "transformer.h.11.attn.c_attn.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.00032826041569933295,
+        "rmse": 0.018117958679795265,
+        "max_abs_error": 0.7778042554855347,
+        "relative_frobenius_error": 0.1649780124425888
+      }
+    },
+    "layer_11.W_K": {
+      "description": "attention key projection",
+      "source_parameter": "transformer.h.11.attn.c_attn.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.00034763445728458464,
+        "rmse": 0.01864495873451233,
+        "max_abs_error": 1.0324448347091675,
+        "relative_frobenius_error": 0.17674241960048676
+      }
+    },
+    "layer_11.W_V": {
+      "description": "attention value projection",
+      "source_parameter": "transformer.h.11.attn.c_attn.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.0007647979073226452,
+        "rmse": 0.027654979377985,
+        "max_abs_error": 1.9228274822235107,
+        "relative_frobenius_error": 0.170436829328537
+      }
+    },
+    "layer_11.W_O": {
+      "description": "attention output projection",
+      "source_parameter": "transformer.h.11.attn.c_proj.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.0010567477438598871,
+        "rmse": 0.03250765800476074,
+        "max_abs_error": 2.2893595695495605,
+        "relative_frobenius_error": 0.1786869913339615
+      }
+    },
+    "layer_11.W_FC": {
+      "description": "MLP input projection",
+      "source_parameter": "transformer.h.11.mlp.c_fc.weight",
+      "shape": [
+        3072,
+        768
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.00044022235670126975,
+        "rmse": 0.020981475710868835,
+        "max_abs_error": 1.6274888515472412,
+        "relative_frobenius_error": 0.16137485206127167
+      }
+    },
+    "layer_11.W_PROJ": {
+      "description": "MLP output projection",
+      "source_parameter": "transformer.h.11.mlp.c_proj.weight",
+      "shape": [
+        768,
+        3072
+      ],
+      "layout": "out_features_by_in_features",
+      "optimization_iterations": 20,
+      "metrics": {
+        "mse": 0.0017467952566221356,
+        "rmse": 0.041794680058956146,
+        "max_abs_error": 7.10826301574707,
+        "relative_frobenius_error": 0.21085026860237122
+      }
+    }
+  },
+  "artifacts": {
+    "reference_w_true": {
+      "file": "reference_w_true.safetensors",
+      "bytes": 339745000,
+      "sha256": "d75de2e16b0584828c15e36479f66fea56be52d5bc456d607837f9dca33e1758"
+    },
+    "public_b": {
+      "file": "public_b_q4.safetensors",
+      "bytes": 339745064,
+      "sha256": "162eeaecc29b54aee0c2574aeacd4849a77d1c448696b58cfe2fc62225d6031e"
+    },
+    "secret_alpha_z": {
+      "file": "secret_alpha_z_q4.safetensors",
+      "bytes": 1671064,
+      "sha256": "07673117fe7d8181292b0928763b0415ffde8e39a6ee401a2487cfb69721874b"
+    },
+    "baseline_w_bcq": {
+      "file": "baseline_w_bcq_q4.safetensors",
+      "bytes": 339745000,
+      "sha256": "de9ea1693898e0abf6952df36a6c24807cc7f0f3a313190d87bc6ef7d1b30745"
+    },
+    "implementation_snapshot": {
+      "file": "extract_gpt2_weights.snapshot.py",
+      "bytes": 17308,
+      "sha256": "6f0e22809d0607ec45dcd52773ce45e7b59cdbd8d5fb6903298db6e2daf177f1"
+    }
+  }
+}

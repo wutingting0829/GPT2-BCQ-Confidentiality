@@ -1,0 +1,80 @@
+{
+  "claim_scope": "weight_and_functional_quantization_baseline",
+  "decision": "pass",
+  "decision_is_provisional": true,
+  "configuration": {
+    "method": "diagonal_activation_aware_mixed_q_alternating",
+    "base_q": 6,
+    "sensitive_q": 8,
+    "sensitive_rule": "layer == 0 or matrix in {W_O, W_PROJ}",
+    "q6_matrix_count": 44,
+    "q8_matrix_count": 28,
+    "effective_weighted_average_q": 6.930555555555555,
+    "alternating_max_iterations": 50,
+    "calibration_split": "train",
+    "calibration_samples": 16,
+    "calibration_block_size": 1024
+  },
+  "utility_gate": {
+    "minimum_accuracy_retention": 0.9,
+    "maximum_perplexity_ratio": 1.2
+  },
+  "screening_16_validation_blocks": {
+    "w_true": {
+      "eval_loss": 3.157943770289421,
+      "perplexity": 23.52217916447681,
+      "token_accuracy": 0.41813294232649073
+    },
+    "w_bcq": {
+      "eval_loss": 3.3291643857955933,
+      "perplexity": 27.915005779334315,
+      "token_accuracy": 0.39613880742913
+    },
+    "accuracy_retention": 0.9473991817650496,
+    "perplexity_ratio": 1.1867525361549645,
+    "decision": "pass"
+  },
+  "confirmation_128_validation_blocks": {
+    "w_true": {
+      "eval_loss": 3.3183486461639404,
+      "perplexity": 27.614711226229836,
+      "token_accuracy": 0.39299242424242425
+    },
+    "w_bcq": {
+      "eval_loss": 3.500232219696045,
+      "perplexity": 33.12314291184139,
+      "token_accuracy": 0.3710059261974585
+    },
+    "accuracy_retention": 0.9440536338904003,
+    "perplexity_ratio": 1.1994745351665808,
+    "decision": "pass"
+  },
+  "weight_metrics": {
+    "relative_frobenius_error": 0.11276925398786192,
+    "cosine_similarity": 0.9936212204362195,
+    "sqnr_db": 18.95618585165269,
+    "stored_reconstruction_max_abs_difference": 0.0
+  },
+  "metric_priority": {
+    "primary": [
+      "validation_loss",
+      "perplexity"
+    ],
+    "secondary": [
+      "next_token_top1_accuracy",
+      "accuracy_retention"
+    ]
+  },
+  "provenance": {
+    "transformers_commit": "7c65cdb570646e8b01cc30d069579f2f4b60c398",
+    "artifact_manifest": "../manifest.json",
+    "artifact_manifest_sha256": "29b0ee88c003feee241f20b6a5a051d0fd8854f9df98f601cfe490e42b6350c1",
+    "screening_report": "../../../sweeps/mixed-q6-q8-activation-aware-50/activation_aware_results.json",
+    "screening_report_sha256": "d1503f013f02929979d71442e986b7203423f15d8f98fd95e00cab985b4de499",
+    "w_true_eval_results": "../../../../outputs/functional-baseline/wtrue/eval_results.json",
+    "w_true_eval_results_sha256": "7590fbb8f7e90996fb3d00cc8d63826cbd5d9294e3271e318d134dca09fdee90",
+    "w_bcq_eval_results": "../../../../outputs/functional-baseline/wbcq-mixed-q6-q8-activation-aware/eval_results.json",
+    "w_bcq_eval_results_sha256": "ac1879cf0601c33a989497929724c96651f2cab0bb9972edb46ed60105a8d07b",
+    "w_bcq_checkpoint_sha256": "87d326298677904fdfeadea7ed21f1799a24968ca56dfe0e686b713ccdab69b9"
+  }
+}

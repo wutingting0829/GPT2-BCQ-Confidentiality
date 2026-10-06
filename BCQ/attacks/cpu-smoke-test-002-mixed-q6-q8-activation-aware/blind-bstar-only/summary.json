@@ -1,0 +1,89 @@
+{
+  "experiment": "blind_bstar_only_reconstruction_attack",
+  "target": "cpu-smoke-test-002-mixed-q6-q8-activation-aware",
+  "threat_model": {
+    "attacker_inputs": [
+      "public B_star values",
+      "public tensor shapes",
+      "published residual-binarization algorithm"
+    ],
+    "forbidden_inputs": [
+      "GPT-2 identity, config, tokenizer, or pretrained checkpoint",
+      "any pretrained/model-family weights",
+      "W_true",
+      "W_BCQ",
+      "alpha",
+      "z",
+      "S",
+      "pi"
+    ],
+    "model_assembly": "evaluator-only"
+  },
+  "a3_key_recovery": {
+    "sign_recovery_accuracy": 0.4916941754694836,
+    "permutation_position_accuracy": 0.14976709213615025,
+    "joint_s_pi_position_accuracy": 0.07377494131455399,
+    "decision": "near_chance"
+  },
+  "screen_16_block_results": {
+    "w_true": {
+      "eval_accuracy": 0.41813294232649073,
+      "eval_loss": 3.157943770289421,
+      "perplexity": 23.52217916447681
+    },
+    "a2_public_order": {
+      "sign_accuracy": 0.49993934160397374,
+      "nrmse": 1.0227169308324362,
+      "eval_accuracy": 0.003421309872922776,
+      "eval_loss": 12.003136456012726,
+      "perplexity": 163266.06603919584
+    },
+    "a3_structural_key_search": {
+      "sign_accuracy": 0.5017218530913929,
+      "nrmse": 1.0222264275408506,
+      "eval_accuracy": 0.003421309872922776,
+      "eval_loss": 13.445775866508484,
+      "perplexity": 690917.6126691212
+    },
+    "a4_synthetic_prior": {
+      "sign_accuracy": 0.4945772783255871,
+      "nrmse": 1.0242234369905903,
+      "eval_accuracy": 0.003421309872922776,
+      "eval_loss": 12.07173901796341,
+      "perplexity": 174859.66518338086
+    },
+    "a5_random_base_projection": {
+      "sign_accuracy": 0.4987172374018916,
+      "nrmse": 1.0001824668137185,
+      "eval_accuracy": 0.003421309872922776,
+      "eval_loss": 13.13094937801361,
+      "perplexity": 504311.48301591026
+    }
+  },
+  "official_128_block_best_result": {
+    "method": "a2_public_order",
+    "w_true_control": {
+      "eval_accuracy": 0.39299242424242425,
+      "eval_loss": 3.3183486461639404,
+      "perplexity": 27.614711226229836
+    },
+    "eval_accuracy": 0.0017641129032258064,
+    "eval_loss": 11.995038032531738,
+    "perplexity": 161949.2077315679,
+    "accuracy_retention": 0.004488923435678196,
+    "perplexity_ratio": 5864.598995977927,
+    "decision": "attack_fails"
+  },
+  "checkpoint_validation": {
+    "candidate_checkpoint_max_abs_diff": 0.0,
+    "changed_parameter_count": 48,
+    "changed_parameters_match_expected_scope": true
+  },
+  "provenance": {
+    "transformers_commit": "7c65cdb570646e8b01cc30d069579f2f4b60c398",
+    "attack_manifest_sha256": "fb9d352bc331a5e3e584d39904b8c809b9ed2092b2a32ec13b5121675a398b98",
+    "raw_evaluation_sha256": "51c65971d7cb093b3ff16e1346013f2e184b472a0ffae3b17ed10923ba3acccb",
+    "official_a2_eval_sha256": "b84e11038a60a36b5d9ed9a2a43871c3fbfbff83a13ba99a911595ed7870dc17",
+    "checkpoint_validation_sha256": "dc37cac3de7c484e698a10291f45033ef3cf542fbe96dcc6ec91f561f4777a61"
+  }
+}

@@ -1,0 +1,7 @@
+{
+  "candidate_checkpoint_max_abs_diff": 0.0,
+  "changed_parameter_count": 48,
+  "changed_parameters_match_expected_scope": true,
+  "unexpected_changed_parameters": [],
+  "missing_expected_changed_parameters": []
+}

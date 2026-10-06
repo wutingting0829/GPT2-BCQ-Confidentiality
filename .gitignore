@@ -185,3 +185,14 @@ test-results/
 # AI agent local setup artifacts
 /.agents/skills
 /.claude/skills
+
+.venv/
+venv/
+.vscode/
+__pycache__/
+*.pyc
+/outputs/
+*.safetensors
+*.pt
+*.pth
+*.ckpt
